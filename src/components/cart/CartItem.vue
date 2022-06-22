@@ -1,0 +1,121 @@
+<template>
+  <li>
+    <div>
+      <img :src="image" :alt="title" />
+    </div>
+    <div>
+      <h3>{{ title }}</h3>
+      <div class="item__data">
+        <div>
+          Price per Item:
+          <strong>${{ price }}</strong>
+        </div>
+        <div>
+          Quantity:
+          <strong>{{ qty }}</strong>
+        </div>
+      </div>
+      <div class="item__total">Total: ${{ itemTotal }}</div>
+      <div class="actions">
+        <div class="quantity-actions">
+          <div @click="decreaseQuantity">-</div>
+          <div @click="increaseQuantity">+</div>
+        </div>
+        <button @click="remove">Remove</button>
+      </div>
+    </div>
+  </li>
+</template>
+
+<script>
+export default {
+  props: ['prodId', 'title', 'image', 'price', 'qty'],
+  computed: {
+    itemTotal() {
+      return (this.price * this.qty).toFixed(2);
+    },
+  },
+  methods: {
+    remove() {
+      this.$store.dispatch('cart/removeFromCart', { productId: this.prodId });
+    },
+    decreaseQuantity() {
+      this.$store.commit('cart/decreaseProductQuantity', {
+        id: this.prodId,
+        price: this.price,
+      });
+    },
+    increaseQuantity() {
+      this.$store.dispatch('cart/addToCart', {
+        id: this.prodId,
+      });
+    },
+  },
+};
+</script>
+
+<style scoped>
+li {
+  margin: 1rem auto;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  text-align: center;
+  max-width: 25rem;
+}
+
+img {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.item__data {
+  display: flex;
+  justify-content: space-between;
+}
+
+.item__total {
+  font-weight: bold;
+  margin: 1rem 0;
+  border-top: 1px solid #474747;
+  border-bottom: 2px solid #474747;
+  padding: 0.25rem 0;
+  width: auto;
+}
+
+button {
+  font: inherit;
+  border: 1px solid black;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+  padding: 0 1.7rem;
+  height: 35px;
+}
+
+button:hover,
+button:active {
+  background-color: #b4b4b4;
+  border-color: #b4b4b4;
+}
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+.quantity-actions div {
+  cursor: pointer;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 25px;
+  margin: 1rem 2px;
+  border: 1px solid black;
+  background-color: black;
+  color: white;
+}
+</style>
